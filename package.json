@@ -1,0 +1,10 @@
+{
+  "name": "SpanishHelper",
+  "version": "1.0.0",
+  "homepage": "https://havenfricke.github.io/Spanish-Helper",
+  "scripts": {
+    "deploy": "gh-pages -d ."
+  }
+}
+
+
