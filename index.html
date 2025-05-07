@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spanish Translator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 800px;
+      margin: 2em auto;
+      line-height: 1.4;
+      padding: 0 1em;
+    }
+    input, button {
+      padding: 0.5em;
+      font-size: 1em;
+      margin-right: 0.5em;
+    }
+    .table-container {
+      overflow-x: auto;
+      margin-top: 1em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5em;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5em;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      background: #f9f9f9;
+    }
+    @media (max-width: 480px) {
+      body {
+        padding: 0 0.5em;
+      }
+      input, button {
+        width: 100%;
+        margin: 0.25em 0;
+      }
+    }
+  </style>
+  <script src="LanguageData.js"></script>
+</head>
+<body>
+  <h1>Spanish Translator</h1>
+  <p>Enter an English sentence and click “Translate.”</p>
+  <input id="sentence-input" type="text" placeholder="Type a sentence…">
+  <button id="translate-btn">Translate</button>
+  <div id="results"></div>
+
+  <script>
+    function clean(word) {
+      return word.replace(/[.,!?;:()"']/g, "").toLowerCase();
+    }
+
+    function searchWord(word) {
+      const dict = window.spanishDictionary;
+      const rows = [];
+
+      // essential verbs: infinitives
+      dict.essentialVerbs.forEach(verb => {
+        if (verb.infinitiveEnglish.toLowerCase().includes(word)) {
+          rows.push({
+            category: 'Infinitive',
+            pronoun: '',
+            english: verb.infinitiveEnglish,
+            spanish: verb.infinitiveSpanish
+          });
+        }
+        // conjugations
+        verb.conjugations.forEach(c => {
+          if (c.english.toLowerCase().includes(word)) {
+            rows.push({
+              category: 'Conjugation',
+              pronoun: c.pronoun,
+              english: c.english,
+              spanish: c.spanish
+            });
+          }
+        });
+      });
+
+      // prepositions
+      dict.prepositions.forEach(p => {
+        if (p.english.toLowerCase().includes(word)) {
+          rows.push({
+            category: 'Preposition',
+            pronoun: '',
+            english: p.english,
+            spanish: p.spanish
+          });
+        }
+      });
+
+      // conjunctions
+      dict.conjunctions.forEach(cj => {
+        if (cj.english.toLowerCase().includes(word)) {
+          rows.push({
+            category: 'Conjunction',
+            pronoun: '',
+            english: cj.english,
+            spanish: cj.spanish
+          });
+        }
+      });
+
+      return rows;
+    }
+
+    document.getElementById("translate-btn").addEventListener("click", () => {
+      const input = document.getElementById("sentence-input").value.trim();
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      if (!input) {
+        resultsDiv.textContent = "Please type a sentence.";
+        return;
+      }
+
+      const words = input.split(/\s+/).map(clean).filter(Boolean);
+
+      words.forEach(w => {
+        const matches = searchWord(w);
+        const container = document.createElement("div");
+
+        if (matches.length) {
+          const title = document.createElement("h3");
+          title.textContent = `Results for “${w}”:`;
+          container.appendChild(title);
+
+          const wrapper = document.createElement("div");
+          wrapper.className = 'table-container';
+
+          const table = document.createElement("table");
+          const thead = document.createElement("thead");
+          thead.innerHTML = `
+            <tr>
+              <th>English</th>
+              <th>Spanish</th>
+            </tr>`;
+          table.appendChild(thead);
+
+          const tbody = document.createElement("tbody");
+          matches.forEach(r => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${r.english}</td>
+              <td>${r.spanish}</td>`;
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          wrapper.appendChild(table);
+          container.appendChild(wrapper);
+
+        } else {
+          const p = document.createElement("p");
+          p.textContent = `No matches found for “${w}.”`;
+          container.appendChild(p);
+        }
+
+        resultsDiv.appendChild(container);
+      });
+    });
+  </script>
+</body>
+</html>
