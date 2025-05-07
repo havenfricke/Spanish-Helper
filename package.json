@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "homepage": "https://havenfricke.github.io/Spanish-Helper",
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d ."
   }
 }
+
 
