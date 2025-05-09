@@ -67,17 +67,14 @@
         if (verb.infinitiveEnglish.toLowerCase().includes(word)) {
           rows.push({
             category: 'Infinitive',
-            pronoun: '',
             english: verb.infinitiveEnglish,
             spanish: verb.infinitiveSpanish
           });
         }
-        // conjugations
         verb.conjugations.forEach(c => {
           if (c.english.toLowerCase().includes(word)) {
             rows.push({
               category: 'Conjugation',
-              pronoun: c.pronoun,
               english: c.english,
               spanish: c.spanish
             });
@@ -90,7 +87,6 @@
         if (p.english.toLowerCase().includes(word)) {
           rows.push({
             category: 'Preposition',
-            pronoun: '',
             english: p.english,
             spanish: p.spanish
           });
@@ -102,9 +98,19 @@
         if (cj.english.toLowerCase().includes(word)) {
           rows.push({
             category: 'Conjunction',
-            pronoun: '',
             english: cj.english,
             spanish: cj.spanish
+          });
+        }
+      });
+
+      // interrogatives
+      dict.interrogatives.forEach(intg => {
+        if (intg.english.toLowerCase().includes(word)) {
+          rows.push({
+            category: 'Interrogative',
+            english: intg.english,
+            spanish: intg.spanish
           });
         }
       });
@@ -130,7 +136,7 @@
 
         if (matches.length) {
           const title = document.createElement("h3");
-          title.textContent = `Results for “${w}”:`;
+          title.textContent = `Results for “${w}”: `;
           container.appendChild(title);
 
           const wrapper = document.createElement("div");
@@ -140,6 +146,7 @@
           const thead = document.createElement("thead");
           thead.innerHTML = `
             <tr>
+              <th>Category</th>
               <th>English</th>
               <th>Spanish</th>
             </tr>`;
@@ -149,6 +156,7 @@
           matches.forEach(r => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
+              <td>${r.category}</td>
               <td>${r.english}</td>
               <td>${r.spanish}</td>`;
             tbody.appendChild(tr);

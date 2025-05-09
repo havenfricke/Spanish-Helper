@@ -456,6 +456,18 @@ window.spanishDictionary = {
       { english: "nevertheless", spanish: "sin embargo", notes: "contrast"     },
       { english: "either",    spanish: "o... o",       notes: "choice"          },
       { english: "not only... but also", spanish: "no solo... sino también", notes: "addition" }
-    ]
+    ],
+    interrogatives: [
+      { english: "what",        spanish: "qué",           notes: "asking about things or actions" },
+      { english: "who",         spanish: "quién",         notes: "asking about people" },
+      { english: "where",       spanish: "dónde",         notes: "asking about location" },
+      { english: "when",        spanish: "cuándo",        notes: "asking about time" },
+      { english: "why",         spanish: "por qué",       notes: "asking about reason or cause" },
+      { english: "how",         spanish: "cómo",          notes: "asking about manner or method" },
+      { english: "which",       spanish: "cuál",          notes: "asking for choice or selection" },
+      { english: "how much",    spanish: "cuánto/a",      notes: "asking about quantity (uncountable)" },
+      { english: "how many",    spanish: "cuántos/as",    notes: "asking about quantity (countable)" },
+      { english: "whose",       spanish: "de quién",      notes: "asking about possession" }
+    ]    
   };
   
