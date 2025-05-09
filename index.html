@@ -4,13 +4,34 @@
   <meta charset="UTF-8">
   <title>Spanish Translator</title>
   <style>
-    body {
-      font-family: sans-serif;
-      max-width: 800px;
-      margin: 2em auto;
-      line-height: 1.4;
-      padding: 0 1em;
+    /* 1) Global reset & box-sizing */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
     }
+
+    /* 2) Base html/body fill full width, no margin */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      font-family: sans-serif;
+      line-height: 1.4;
+    }
+
+    /* 3) Wrapper: full-width on mobile, constrained with gutters on desktop */
+    .wrapper {
+      width: 100%;
+      margin: 0 auto;
+      padding: 0;
+    }
+    .wrapper > * {
+      width: 100%;
+      display: block;
+    }
+
+    /* 4) Inputs, buttons & tables styling */
     input, button {
       padding: 0.5em;
       font-size: 1em;
@@ -34,24 +55,46 @@
     th {
       background: #f9f9f9;
     }
+
+    /* 5) Mobile tweaks (everything still full-width but more touch-friendly) */
     @media (max-width: 480px) {
-      body {
-        padding: 0 0.5em;
-      }
       input, button {
         width: 100%;
-        margin: 0.25em 0;
+        margin: 0.5em 0;
+        padding: 0.75em;
+        font-size: 1.1em;
+      }
+      .table-container {
+        margin-top: 1.5em;
+      }
+      table {
+        font-size: 1rem;
+      }
+      th, td {
+        padding: 0.75em;
+      }
+    }
+
+    /* 6) Desktop wrapper constraints & gutters */
+    @media (min-width: 768px) {
+      .wrapper {
+        max-width: 800px;    /* your desktop reading width */
+        padding: 2em 1em;    /* vertical + horizontal gutters */
       }
     }
   </style>
   <script src="/Spanish-Helper/LanguageData.js"></script>
 </head>
 <body>
-  <h1>Spanish Translator</h1>
-  <p>Enter an English sentence and click “Translate.”</p>
-  <input id="sentence-input" type="text" placeholder="Type a sentence…">
-  <button id="translate-btn">Translate</button>
-  <div id="results"></div>
+  <div class="wrapper">
+    <h1>Spanish Translator</h1>
+    <p>Enter an English sentence and click “Translate.”</p>
+
+    <input id="sentence-input" type="text" placeholder="Type a sentence…">
+    <button id="translate-btn">Translate</button>
+
+    <div id="results"></div>
+  </div>
 
   <script>
     function clean(word) {
@@ -59,59 +102,35 @@
     }
 
     function searchWord(word) {
-      const dict = window.spanishDictionary;
+      const dict = window.spanishDictionary || {};
       const rows = [];
 
-      // essential verbs: infinitives
-      dict.essentialVerbs.forEach(verb => {
+      (dict.essentialVerbs || []).forEach(verb => {
         if (verb.infinitiveEnglish.toLowerCase().includes(word)) {
-          rows.push({
-            category: 'Infinitive',
-            english: verb.infinitiveEnglish,
-            spanish: verb.infinitiveSpanish
-          });
+          rows.push({ category: 'Infinitive', english: verb.infinitiveEnglish, spanish: verb.infinitiveSpanish });
         }
-        verb.conjugations.forEach(c => {
+        (verb.conjugations || []).forEach(c => {
           if (c.english.toLowerCase().includes(word)) {
-            rows.push({
-              category: 'Conjugation',
-              english: c.english,
-              spanish: c.spanish
-            });
+            rows.push({ category: 'Conjugation', english: c.english, spanish: c.spanish });
           }
         });
       });
 
-      // prepositions
-      dict.prepositions.forEach(p => {
+      (dict.prepositions || []).forEach(p => {
         if (p.english.toLowerCase().includes(word)) {
-          rows.push({
-            category: 'Preposition',
-            english: p.english,
-            spanish: p.spanish
-          });
+          rows.push({ category: 'Preposition', english: p.english, spanish: p.spanish });
         }
       });
 
-      // conjunctions
-      dict.conjunctions.forEach(cj => {
+      (dict.conjunctions || []).forEach(cj => {
         if (cj.english.toLowerCase().includes(word)) {
-          rows.push({
-            category: 'Conjunction',
-            english: cj.english,
-            spanish: cj.spanish
-          });
+          rows.push({ category: 'Conjunction', english: cj.english, spanish: cj.spanish });
         }
       });
 
-      // interrogatives
-      dict.interrogatives.forEach(intg => {
+      (dict.interrogatives || []).forEach(intg => {
         if (intg.english.toLowerCase().includes(word)) {
-          rows.push({
-            category: 'Interrogative',
-            english: intg.english,
-            spanish: intg.spanish
-          });
+          rows.push({ category: 'Interrogative', english: intg.english, spanish: intg.spanish });
         }
       });
 
@@ -136,32 +155,30 @@
 
         if (matches.length) {
           const title = document.createElement("h3");
-          title.textContent = `Results for “${w}”: `;
+          title.textContent = `Results for “${w}”:`;
           container.appendChild(title);
 
           const wrapper = document.createElement("div");
           wrapper.className = 'table-container';
 
           const table = document.createElement("table");
-          const thead = document.createElement("thead");
-          thead.innerHTML = `
-            <tr>
-              <th>Category</th>
-              <th>English</th>
-              <th>Spanish</th>
-            </tr>`;
-          table.appendChild(thead);
-
-          const tbody = document.createElement("tbody");
-          matches.forEach(r => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${r.category}</td>
-              <td>${r.english}</td>
-              <td>${r.spanish}</td>`;
-            tbody.appendChild(tr);
-          });
-          table.appendChild(tbody);
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>English</th>
+                <th>Spanish</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${matches.map(r =>
+                `<tr>
+                  <td>${r.category}</td>
+                  <td>${r.english}</td>
+                  <td>${r.spanish}</td>
+                </tr>`
+              ).join('')}
+            </tbody>`;
           wrapper.appendChild(table);
           container.appendChild(wrapper);
 
